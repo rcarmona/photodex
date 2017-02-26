@@ -1,0 +1,25 @@
+{
+  "name": "photodex",
+  "version": "1.0.0",
+  "description": "Gotta snap 'em all!",
+  "private": true,
+  "scripts": {
+    "rename": "renamer --regex --insensitive --find \".*(\\d{3}).*\\.png\" --replace \"$1.png\" \"snaps/*\"",
+    "presnaps": "npm run rename && mkdirp snaps/gallery && mkdirp snaps/thumbs && npm run snaps:placeholder",
+    "snaps": "npm run snaps:gallery && npm run snaps:thumbs",
+    "postsnaps": "npm run snaps:cleanup && npm run snaps:jsonlist",
+    "snaps:placeholder": "magick convert -size \"192x192\" -colorspace Gray xc: +noise Random snaps/missingno.png",
+    "snaps:gallery": "magick mogrify -path snaps/gallery -quality 50 -format jpg snaps/*.png",
+    "snaps:thumbs": "magick mogrify -path snaps/thumbs -resize \"192x192^\" -gravity center -extent \"192x192\" -quality 90 -format jpg snaps/*.png",
+    "snaps:cleanup": "rimraf snaps/**/missingno.*",
+    "snaps:jsonlist": "node-ls snaps/thumbs > snaps/snaps.json",
+    "start": "static -H \"{\\\"Cache-Control\\\": \\\"no-cache, must-revalidate\\\"}\""
+  },
+  "devDependencies": {
+    "mkdirp": "^0.5.1",
+    "node-ls": "0.0.4",
+    "node-static": "^0.7.9",
+    "renamer": "^0.6.1",
+    "rimraf": "^2.6.0"
+  }
+}
